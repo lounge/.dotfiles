@@ -123,6 +123,8 @@ fi
 
 eval "$(fnm env --use-on-cd --shell zsh)"
 
-eval $(thefuck --alias --enable-experimental-instant-mode)
+# Fucks up rider
+# eval $(thefuck --alias --enable-experimental-instant-mode)
+
 
 
