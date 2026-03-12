@@ -12,6 +12,8 @@ fi
 export ZSH="$HOME/.oh-my-zsh"
 export PATH="$PATH:/opt/homebrew/opt/python@3.10/libexec/bin"
 export PATH="$PATH:/Applications/Google Chrome.app/Contents/MacOS"
+export PATH="/Users/fred/.local/bin:$PATH
+
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
@@ -127,4 +129,8 @@ eval "$(fnm env --use-on-cd --shell zsh)"
 # eval $(thefuck --alias --enable-experimental-instant-mode)
 
 
+# opencode
+export PATH=/Users/fred/.opencode/bin:$PATH
 
+# dotnet
+export PATH=/usr/local/share/dotnet/:$PATH"
