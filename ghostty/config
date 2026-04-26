@@ -48,7 +48,8 @@
 # resize-overlay-duration = 4s 200ms
 
 
-font-family = JetBrains Mono
+font-family = JetBrainsMono Nerd Font
+font-family = MesloLGS NF
 adjust-cursor-thickness = 10
 cursor-color = #58f796
 split-divider-color = #58f796
