@@ -7,22 +7,50 @@ Personal macOS setup — tools, apps, and configs. Idempotent: re-run anytime, r
 ```sh
 git clone <repo-url> ~/workspace/personal/.dotfiles
 cd ~/workspace/personal/.dotfiles
-./install.sh              # everything
-./install.sh cli lang     # or pick categories
+./install.sh                     # everything
+./install.sh cli lang            # whole categories
+./install.sh lang:node,dotnet    # specific items from a category
+./install.sh app:zed cli link    # mix and match
 ```
 
-## Categories
+## Categories and items
 
-| Category | Installs |
-|---|---|
-| `app`  | ghostty, rider, zed, fork, docker-desktop, lm-studio, postman |
-| `cli`  | tmux, gh, azure-cli, mkcert, ngrok, claude code |
-| `lang` | fnm (node), dotnet-sdk, aspire, go, rust (rustup), odin |
-| `misc` | brave, discord, telegram |
-| `conf` | oh-my-zsh, powerlevel10k, zsh plugins, tpm, nerd fonts |
-| `link` | symlinks configs + Claude skills into place (offline, no brew) |
+| Category | Item | Installs |
+|---|---|---|
+| `app`  | `ghostty` | Ghostty terminal |
+|        | `rider` | JetBrains Rider |
+|        | `zed` | Zed |
+|        | `fork` | Fork git client |
+|        | `docker` | Docker Desktop |
+|        | `lmstudio` | LM Studio |
+|        | `postman` | Postman |
+| `cli`  | `tmux` | tmux |
+|        | `gh` | GitHub CLI |
+|        | `az` | Azure CLI |
+|        | `mkcert` | mkcert |
+|        | `ngrok` | ngrok |
+|        | `claude` | Claude Code (native installer) |
+| `lang` | `node` | fnm + Node LTS |
+|        | `dotnet` | .NET SDK (latest) |
+|        | `aspire` | Aspire CLI |
+|        | `go` | Go + golangci-lint |
+|        | `rust` | Rust via rustup |
+|        | `odin` | Odin + odinfmt |
+| `misc` | `brave` | Brave Browser |
+|        | `discord` | Discord |
+|        | `telegram` | Telegram |
+| `conf` | `fonts` | JetBrainsMono Nerd Font + MesloLGS NF |
+|        | `zsh` | oh-my-zsh + powerlevel10k + zsh plugins |
+|        | `tmux` | tpm (tmux plugin manager) |
+| `link` | `zsh` | `.zshrc` + `.p10k.zsh` |
+|        | `tmux` | `.tmux.conf` + tmux plugins |
+|        | `git` | gitconfigs |
+|        | `ghostty` | ghostty config |
+|        | `zed` | zed settings |
+|        | `claude` | claude settings |
+|        | `skills` | Claude Code skills |
 
-No arguments = all categories.
+`category` alone = all its items. No arguments = everything. `link` is offline, no brew.
 
 ## What gets linked
 

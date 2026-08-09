@@ -4,13 +4,18 @@
 # repo into their live locations. Safe to re-run — existing installs are
 # skipped and any real file in the way of a symlink is moved to a backup dir.
 #
-# Usage: ./install.sh [app] [cli] [lang] [misc] [conf] [link]
-#   app   dev GUI applications (ghostty, rider, zed, fork, docker, postman, ...)
-#   cli   command-line tools (tmux, gh, azure-cli, mkcert, ngrok, claude)
-#   lang  language toolchains (fnm/node, dotnet, aspire, go, rust, odin)
-#   misc  non-dev apps (brave, discord, telegram)
-#   conf  shell stack (oh-my-zsh, powerlevel10k, zsh plugins, tpm, fonts)
-#   link  symlink repo configs and Claude skills into place (offline, no brew)
+# Usage: ./install.sh [category[:item,item...]] ...
+#   app   dev GUI apps      (ghostty rider zed fork docker lmstudio postman)
+#   cli   command-line tools (tmux gh az mkcert ngrok claude)
+#   lang  language toolchains (node dotnet aspire go rust odin)
+#   misc  non-dev apps       (brave discord telegram)
+#   conf  shell stack        (fonts zsh tmux)
+#   link  config symlinks    (zsh tmux git ghostty zed claude skills)
+# Examples:
+#   ./install.sh                     everything
+#   ./install.sh lang                all of lang
+#   ./install.sh lang:node,dotnet    only node + dotnet
+#   ./install.sh app:zed cli link    mix and match
 # No arguments = install everything.
 set -euo pipefail
 
@@ -23,23 +28,66 @@ skip()  { printf '    %s\n' "$*"; }
 usage() { sed -n '/^# Usage/,/^# No arguments/s/^# \{0,1\}//p' "${BASH_SOURCE[0]}"; }
 
 # --- Category selection -------------------------------------------------------
-DO_APP=false DO_CLI=false DO_LANG=false DO_MISC=false DO_CONF=false DO_LINK=false
+APP_KNOWN="ghostty rider zed fork docker lmstudio postman"
+CLI_KNOWN="tmux gh az mkcert ngrok claude"
+LANG_KNOWN="node dotnet aspire go rust odin"
+MISC_KNOWN="brave discord telegram"
+CONF_KNOWN="fonts zsh tmux"
+LINK_KNOWN="zsh tmux git ghostty zed claude skills"
+
+DO_APP=false  APP_ITEMS=""
+DO_CLI=false  CLI_ITEMS=""
+DO_LANG=false LANG_ITEMS=""
+DO_MISC=false MISC_ITEMS=""
+DO_CONF=false CONF_ITEMS=""
+DO_LINK=false LINK_ITEMS=""
+
+validate_items() { # $1=known items  $2=comma list  $3=category name
+  local i
+  for i in ${2//,/ }; do
+    case " $1 " in
+      *" $i "*) ;;
+      *) echo "Unknown $3 item: $i"; echo "Valid $3 items: $1"; exit 1 ;;
+    esac
+  done
+}
+
+# Sets DO_<cat>=true and merges items ("all" when the bare category is given)
+select_cat() { # $1=flag var  $2=items var  $3=known items  $4=cat name  $5=comma list or ""
+  printf -v "$1" true
+  if [ -z "$5" ]; then
+    printf -v "$2" all
+  elif [ "${!2}" != "all" ]; then
+    validate_items "$3" "$5" "$4"
+    printf -v "$2" '%s' "${!2:+${!2},}$5"
+  fi
+}
+
 if [ $# -eq 0 ]; then
-  DO_APP=true DO_CLI=true DO_LANG=true DO_MISC=true DO_CONF=true DO_LINK=true
+  DO_APP=true APP_ITEMS=all DO_CLI=true CLI_ITEMS=all DO_LANG=true LANG_ITEMS=all
+  DO_MISC=true MISC_ITEMS=all DO_CONF=true CONF_ITEMS=all DO_LINK=true LINK_ITEMS=all
 else
   for arg in "$@"; do
-    case "$arg" in
-      app|apps)     DO_APP=true ;;
-      cli)          DO_CLI=true ;;
-      lang|langs)   DO_LANG=true ;;
-      misc)         DO_MISC=true ;;
-      conf|config)  DO_CONF=true ;;
-      link|links)   DO_LINK=true ;;
+    cat="${arg%%:*}"
+    items=""; [ "$arg" != "$cat" ] && items="${arg#*:}"
+    case "$cat" in
+      app|apps)     select_cat DO_APP  APP_ITEMS  "$APP_KNOWN"  app  "$items" ;;
+      cli)          select_cat DO_CLI  CLI_ITEMS  "$CLI_KNOWN"  cli  "$items" ;;
+      lang|langs)   select_cat DO_LANG LANG_ITEMS "$LANG_KNOWN" lang "$items" ;;
+      misc)         select_cat DO_MISC MISC_ITEMS "$MISC_KNOWN" misc "$items" ;;
+      conf|config)  select_cat DO_CONF CONF_ITEMS "$CONF_KNOWN" conf "$items" ;;
+      link|links)   select_cat DO_LINK LINK_ITEMS "$LINK_KNOWN" link "$items" ;;
       -h|--help)    usage; exit 0 ;;
-      *)            echo "Unknown category: $arg"; usage; exit 1 ;;
+      *)            echo "Unknown category: $cat"; usage; exit 1 ;;
     esac
   done
 fi
+
+# True when the item list is "all" or contains the item
+want() { # $1=items  $2=item
+  [ "$1" = "all" ] && return 0
+  case ",$1," in *",$2,"*) return 0 ;; *) return 1 ;; esac
+}
 
 # --- Helpers ------------------------------------------------------------------
 ensure_brew() {
@@ -76,90 +124,121 @@ link() {
 install_app() {
   info "Installing dev apps"
   ensure_brew
-  local casks=(
-    ghostty rider zed fork
-    docker-desktop lm-studio postman
-  )
-  for c in "${casks[@]}"; do bc "$c"; done
-  skip "Rider settings are not automated: import $DOTFILES/rider/settings.zip via Rider > Manage Settings > Import."
+  want "$APP_ITEMS" ghostty  && bc ghostty
+  want "$APP_ITEMS" rider    && bc rider
+  want "$APP_ITEMS" zed      && bc zed
+  want "$APP_ITEMS" fork     && bc fork
+  want "$APP_ITEMS" docker   && bc docker-desktop
+  want "$APP_ITEMS" lmstudio && bc lm-studio
+  want "$APP_ITEMS" postman  && bc postman
+  if want "$APP_ITEMS" rider; then
+    skip "Rider settings are not automated: import $DOTFILES/rider/settings.zip via Rider > Manage Settings > Import."
+  fi
+  return 0
 }
 
 # --- cli: command-line tools --------------------------------------------------
 install_cli() {
   info "Installing CLI tools"
   ensure_brew
-  local formulae=(tmux gh azure-cli mkcert)
-  for f in "${formulae[@]}"; do bi "$f"; done
-  bc ngrok
+  want "$CLI_ITEMS" tmux   && bi tmux
+  want "$CLI_ITEMS" gh     && bi gh
+  want "$CLI_ITEMS" az     && bi azure-cli
+  want "$CLI_ITEMS" mkcert && bi mkcert
+  want "$CLI_ITEMS" ngrok  && bc ngrok
 
   # Claude Code via native installer (self-updating, lands in ~/.local/bin)
-  if ! command -v claude >/dev/null; then
+  if want "$CLI_ITEMS" claude && ! command -v claude >/dev/null; then
     info "Installing Claude Code"
     curl -fsSL https://claude.ai/install.sh | bash
   fi
+  return 0
 }
 
 # --- lang: language toolchains ------------------------------------------------
 install_lang() {
   info "Installing language toolchains"
   ensure_brew
-  local formulae=(fnm go golangci-lint odin odinfmt)
-  for f in "${formulae[@]}"; do bi "$f"; done
-  bc dotnet-sdk
-  bc aspire
+  if want "$LANG_ITEMS" node; then
+    bi fnm
+    # Latest LTS node via fnm if no version is installed yet
+    if ! fnm list 2>/dev/null | grep -q 'v[0-9]'; then
+      info "Installing Node LTS"
+      fnm install --lts
+      fnm default lts-latest
+    fi
+  fi
+  if want "$LANG_ITEMS" go; then
+    bi go
+    bi golangci-lint
+  fi
+  if want "$LANG_ITEMS" odin; then
+    bi odin
+    bi odinfmt
+  fi
+  want "$LANG_ITEMS" dotnet && bc dotnet-sdk
+  want "$LANG_ITEMS" aspire && bc aspire
 
   # Rust via rustup (zshrc sources ~/.cargo/env when present)
-  if [ ! -d "$HOME/.cargo" ]; then
+  if want "$LANG_ITEMS" rust && [ ! -d "$HOME/.cargo" ]; then
     info "Installing Rust (rustup)"
     curl --proto '=https' --tlsv1.2 -fsSf https://sh.rustup.rs | sh -s -- -y --no-modify-path
   fi
+  return 0
 }
 
 # --- misc: non-dev apps -------------------------------------------------------
 install_misc() {
   info "Installing misc apps"
   ensure_brew
-  local casks=(brave-browser discord telegram)
-  for c in "${casks[@]}"; do bc "$c"; done
+  want "$MISC_ITEMS" brave    && bc brave-browser
+  want "$MISC_ITEMS" discord  && bc discord
+  want "$MISC_ITEMS" telegram && bc telegram
+  return 0
 }
 
 # --- conf: shell stack --------------------------------------------------------
 install_conf() {
-  info "Installing fonts"
-  ensure_brew
-  bc font-jetbrains-mono-nerd-font
-  # MesloLGS NF — the font powerlevel10k and the ghostty config expect
-  local style font
-  for style in Regular Bold Italic "Bold Italic"; do
-    font="MesloLGS NF ${style}.ttf"
-    if [ ! -f "$HOME/Library/Fonts/$font" ]; then
-      curl -fsSL -o "$HOME/Library/Fonts/$font" \
-        "https://github.com/romkatv/powerlevel10k-media/raw/master/${font// /%20}"
-      skip "installed $font"
-    else
-      skip "$font already installed"
-    fi
-  done
-
-  if [ ! -d "$HOME/.oh-my-zsh" ]; then
-    info "Installing Oh My Zsh"
-    RUNZSH=no CHSH=no KEEP_ZSHRC=yes \
-      sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+  if want "$CONF_ITEMS" fonts; then
+    info "Installing fonts"
+    ensure_brew
+    bc font-jetbrains-mono-nerd-font
+    # MesloLGS NF — the font powerlevel10k and the ghostty config expect
+    local style font
+    for style in Regular Bold Italic "Bold Italic"; do
+      font="MesloLGS NF ${style}.ttf"
+      if [ ! -f "$HOME/Library/Fonts/$font" ]; then
+        curl -fsSL -o "$HOME/Library/Fonts/$font" \
+          "https://github.com/romkatv/powerlevel10k-media/raw/master/${font// /%20}"
+        skip "installed $font"
+      else
+        skip "$font already installed"
+      fi
+    done
   fi
 
-  local zsh_custom="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
-  info "Installing zsh theme and plugins"
-  [ -d "$zsh_custom/themes/powerlevel10k" ] || \
-    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$zsh_custom/themes/powerlevel10k"
-  [ -d "$zsh_custom/plugins/zsh-autosuggestions" ] || \
-    git clone --depth=1 https://github.com/zsh-users/zsh-autosuggestions.git "$zsh_custom/plugins/zsh-autosuggestions"
-  [ -d "$zsh_custom/plugins/zsh-syntax-highlighting" ] || \
-    git clone --depth=1 https://github.com/zsh-users/zsh-syntax-highlighting.git "$zsh_custom/plugins/zsh-syntax-highlighting"
+  if want "$CONF_ITEMS" zsh; then
+    if [ ! -d "$HOME/.oh-my-zsh" ]; then
+      info "Installing Oh My Zsh"
+      RUNZSH=no CHSH=no KEEP_ZSHRC=yes \
+        sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    fi
 
-  if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
+    local zsh_custom="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
+    info "Installing zsh theme and plugins"
+    [ -d "$zsh_custom/themes/powerlevel10k" ] || \
+      git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$zsh_custom/themes/powerlevel10k"
+    [ -d "$zsh_custom/plugins/zsh-autosuggestions" ] || \
+      git clone --depth=1 https://github.com/zsh-users/zsh-autosuggestions.git "$zsh_custom/plugins/zsh-autosuggestions"
+    [ -d "$zsh_custom/plugins/zsh-syntax-highlighting" ] || \
+      git clone --depth=1 https://github.com/zsh-users/zsh-syntax-highlighting.git "$zsh_custom/plugins/zsh-syntax-highlighting"
+  fi
+
+  if want "$CONF_ITEMS" tmux && [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
     info "Installing tpm (tmux plugin manager)"
     git clone --depth=1 https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm"
   fi
+  return 0
 }
 
 # --- link: symlink configs and skills -----------------------------------------
@@ -169,33 +248,42 @@ install_link() {
   mkdir -p "$HOME/workspace/personal" "$HOME/workspace/work"
 
   info "Linking configs"
-  link "$DOTFILES/zsh/.zshrc"      "$HOME/.zshrc"
-  link "$DOTFILES/zsh/.p10k.zsh"   "$HOME/.p10k.zsh"
-  link "$DOTFILES/tmux/.tmux.conf" "$HOME/.tmux.conf"
-  link "$DOTFILES/git/.gitconfig"          "$HOME/.gitconfig"
-  link "$DOTFILES/git/.gitconfig-personal" "$HOME/.gitconfig-personal"
-  link "$DOTFILES/git/.gitconfig-work"     "$HOME/.gitconfig-work"
-  link "$DOTFILES/ghostty/config"  "$HOME/.config/ghostty/config"
+  if want "$LINK_ITEMS" zsh; then
+    link "$DOTFILES/zsh/.zshrc"    "$HOME/.zshrc"
+    link "$DOTFILES/zsh/.p10k.zsh" "$HOME/.p10k.zsh"
+  fi
+  want "$LINK_ITEMS" tmux && link "$DOTFILES/tmux/.tmux.conf" "$HOME/.tmux.conf"
+  if want "$LINK_ITEMS" git; then
+    link "$DOTFILES/git/.gitconfig"          "$HOME/.gitconfig"
+    link "$DOTFILES/git/.gitconfig-personal" "$HOME/.gitconfig-personal"
+    link "$DOTFILES/git/.gitconfig-work"     "$HOME/.gitconfig-work"
+  fi
+  want "$LINK_ITEMS" ghostty && link "$DOTFILES/ghostty/config" "$HOME/.config/ghostty/config"
   # Only settings.json is tracked — the rest of ~/.config/zed is Zed-internal state
-  link "$DOTFILES/zed/settings.json" "$HOME/.config/zed/settings.json"
+  want "$LINK_ITEMS" zed && link "$DOTFILES/zed/settings.json" "$HOME/.config/zed/settings.json"
   # Same for ~/.claude — settings.json only (model, plugins/marketplaces), rest is runtime state
-  link "$DOTFILES/claude/settings.json" "$HOME/.claude/settings.json"
+  want "$LINK_ITEMS" claude && link "$DOTFILES/claude/settings.json" "$HOME/.claude/settings.json"
 
-  info "Linking Claude Code skills"
-  local skill name
-  for skill in "$DOTFILES"/agents/skills/*/; do
-    name="$(basename "$skill")"
-    link "${skill%/}" "$HOME/.agents/skills/$name"
-    link "$HOME/.agents/skills/$name" "$HOME/.claude/skills/$name"
-  done
+  if want "$LINK_ITEMS" skills; then
+    info "Linking Claude Code skills"
+    local skill name
+    for skill in "$DOTFILES"/agents/skills/*/; do
+      name="$(basename "$skill")"
+      link "${skill%/}" "$HOME/.agents/skills/$name"
+      link "$HOME/.agents/skills/$name" "$HOME/.claude/skills/$name"
+    done
+  fi
 
   # tmux plugins declared in .tmux.conf (needs the conf symlinked first)
-  if command -v tmux >/dev/null && [ -x "$HOME/.tmux/plugins/tpm/bin/install_plugins" ]; then
-    info "Installing tmux plugins"
-    "$HOME/.tmux/plugins/tpm/bin/install_plugins" >/dev/null || true
-  else
-    skip "tmux or tpm missing — run './install.sh cli conf' then re-run link to install tmux plugins"
+  if want "$LINK_ITEMS" tmux; then
+    if command -v tmux >/dev/null && [ -x "$HOME/.tmux/plugins/tpm/bin/install_plugins" ]; then
+      info "Installing tmux plugins"
+      "$HOME/.tmux/plugins/tpm/bin/install_plugins" >/dev/null || true
+    else
+      skip "tmux or tpm missing — run './install.sh cli:tmux conf:tmux' then re-run link:tmux to install tmux plugins"
+    fi
   fi
+  return 0
 }
 
 # --- Run selected categories --------------------------------------------------
