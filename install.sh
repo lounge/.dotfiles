@@ -37,16 +37,32 @@ fi
 [ -x /opt/homebrew/bin/brew ] && eval "$(/opt/homebrew/bin/brew shellenv)"
 
 info "Installing brew packages"
-brew list tmux >/dev/null 2>&1 || brew install tmux
-brew list fnm  >/dev/null 2>&1 || brew install fnm
-brew list --cask ghostty >/dev/null 2>&1 || brew install --cask ghostty
-brew list --cask font-jetbrains-mono-nerd-font >/dev/null 2>&1 || brew install --cask font-jetbrains-mono-nerd-font
-brew list --cask rider >/dev/null 2>&1 || brew install --cask rider
-brew list --cask dotnet-sdk >/dev/null 2>&1 || brew install --cask dotnet-sdk
-brew list --cask zed >/dev/null 2>&1 || brew install --cask zed
-brew list --cask fork >/dev/null 2>&1 || brew install --cask fork
-brew list --cask docker-desktop >/dev/null 2>&1 || brew install --cask docker-desktop
-brew list --cask lm-studio >/dev/null 2>&1 || brew install --cask lm-studio
+FORMULAE=(
+  tmux fnm
+  gh azure-cli mkcert
+  go golangci-lint
+  odin odinfmt
+)
+CASKS=(
+  ghostty font-jetbrains-mono-nerd-font
+  rider zed fork dotnet-sdk
+  docker-desktop lm-studio
+  ngrok aspire
+  brave-browser postman
+  discord telegram
+)
+for f in "${FORMULAE[@]}"; do
+  brew list "$f" >/dev/null 2>&1 || brew install "$f"
+done
+for c in "${CASKS[@]}"; do
+  brew list --cask "$c" >/dev/null 2>&1 || brew install --cask "$c"
+done
+
+# Rust via rustup (zshrc sources ~/.cargo/env when present)
+if [ ! -d "$HOME/.cargo" ]; then
+  info "Installing Rust (rustup)"
+  curl --proto '=https' --tlsv1.2 -fsSf https://sh.rustup.rs | sh -s -- -y --no-modify-path
+fi
 
 # MesloLGS NF — the font powerlevel10k and the ghostty config expect
 info "Installing MesloLGS NF fonts"
