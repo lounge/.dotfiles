@@ -5,8 +5,8 @@ Personal macOS setup — tools, apps, and configs. Idempotent: re-run anytime, r
 ## Install
 
 ```sh
-git clone <repo-url> ~/workspace/personal/.dotfiles
-cd ~/workspace/personal/.dotfiles
+git clone <repo-url> ~/.dotfiles
+cd ~/.dotfiles
 ./install.sh                     # everything
 ./install.sh cli lang            # whole categories
 ./install.sh lang:node,dotnet    # specific items from a category
