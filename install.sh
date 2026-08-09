@@ -45,6 +45,8 @@ brew list --cask rider >/dev/null 2>&1 || brew install --cask rider
 brew list --cask dotnet-sdk >/dev/null 2>&1 || brew install --cask dotnet-sdk
 brew list --cask zed >/dev/null 2>&1 || brew install --cask zed
 brew list --cask fork >/dev/null 2>&1 || brew install --cask fork
+brew list --cask docker-desktop >/dev/null 2>&1 || brew install --cask docker-desktop
+brew list --cask lm-studio >/dev/null 2>&1 || brew install --cask lm-studio
 
 # MesloLGS NF — the font powerlevel10k and the ghostty config expect
 info "Installing MesloLGS NF fonts"
