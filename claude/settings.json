@@ -1,0 +1,15 @@
+{
+  "model": "claude-fable-5[1m]",
+  "enabledPlugins": {
+    "aspire@aspire-skills": true
+  },
+  "extraKnownMarketplaces": {
+    "aspire-skills": {
+      "source": {
+        "source": "github",
+        "repo": "microsoft/aspire-skills"
+      }
+    }
+  },
+  "effortLevel": "high"
+}
