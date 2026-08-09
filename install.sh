@@ -164,6 +164,10 @@ install_conf() {
 
 # --- link: symlink configs and skills -----------------------------------------
 install_link() {
+  # Workspace layout the git includeIf identity switching relies on
+  info "Creating workspace directories"
+  mkdir -p "$HOME/workspace/personal" "$HOME/workspace/work"
+
   info "Linking configs"
   link "$DOTFILES/zsh/.zshrc"      "$HOME/.zshrc"
   link "$DOTFILES/zsh/.p10k.zsh"   "$HOME/.p10k.zsh"
