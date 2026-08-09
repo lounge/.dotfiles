@@ -1,0 +1,11 @@
+[user]
+  name = lounge
+  email = fredlunden@gmail.com
+
+[includeIf "gitdir:~/workspace/personal/"]
+  path = ~/.gitconfig-personal
+
+[includeIf "gitdir:~/workspace/work/"]
+  path = ~/.gitconfig-work
+[core]
+	autocrlf = input
