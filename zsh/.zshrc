@@ -24,19 +24,20 @@ plugins=(git zsh-autosuggestions web-search zsh-syntax-highlighting)
 source $ZSH/oh-my-zsh.sh
 
 # fnm
-FNM_PATH="/Users/fred/Library/Application Support/fnm"
+FNM_PATH="$HOME/Library/Application Support/fnm"
 if [ -d "$FNM_PATH" ]; then
-  export PATH="/Users/fred/Library/Application Support/fnm:$PATH"
-  eval "`fnm env`"
+  export PATH="$FNM_PATH:$PATH"
 fi
-
-eval "$(fnm env --use-on-cd --shell zsh)"
+command -v fnm >/dev/null && eval "$(fnm env --use-on-cd --shell zsh)"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-. "$HOME/.cargo/env"
+[[ ! -f "$HOME/.cargo/env" ]] || . "$HOME/.cargo/env"
 export PATH="$HOME/.local/bin:$PATH"
 
 # Added by LM Studio CLI (lms)
-export PATH="$PATH:/Users/lounge/.lmstudio/bin"
+[[ ! -d "$HOME/.lmstudio/bin" ]] || export PATH="$PATH:$HOME/.lmstudio/bin"
+
+# Odin
+[[ ! -d "$HOME/odin" ]] || export PATH="$PATH:$HOME/odin"
