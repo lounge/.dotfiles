@@ -24,7 +24,8 @@ cd ~/.dotfiles
 |        | `docker` | Docker Desktop |
 |        | `lmstudio` | LM Studio |
 |        | `postman` | Postman |
-| `cli`  | `tmux` | tmux |
+| `cli`  | `git` | git (brew, newer than Apple's) |
+|        | `tmux` | tmux |
 |        | `gh` | GitHub CLI |
 |        | `az` | Azure CLI |
 |        | `mkcert` | mkcert |
@@ -50,7 +51,7 @@ cd ~/.dotfiles
 |        | `claude` | claude settings |
 |        | `skills` | Claude Code skills |
 
-`category` alone = all its items. No arguments = everything. `link` is offline, no brew.
+`category` alone = all its items. No arguments = everything. `link` needs no brew (network only to fetch missing tmux plugins).
 
 ## What gets linked
 
