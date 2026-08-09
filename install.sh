@@ -6,7 +6,7 @@
 #
 # Usage: ./install.sh [category[:item,item...]] ...
 #   app   dev GUI apps      (ghostty rider zed fork docker lmstudio postman)
-#   cli   command-line tools (tmux gh az mkcert ngrok claude)
+#   cli   command-line tools (git tmux gh az mkcert ngrok claude)
 #   lang  language toolchains (node dotnet aspire go rust odin)
 #   misc  non-dev apps       (brave discord telegram)
 #   conf  shell stack        (fonts zsh tmux)
@@ -29,7 +29,7 @@ usage() { sed -n '/^# Usage/,/^# No arguments/s/^# \{0,1\}//p' "${BASH_SOURCE[0]
 
 # --- Category selection -------------------------------------------------------
 APP_KNOWN="ghostty rider zed fork docker lmstudio postman"
-CLI_KNOWN="tmux gh az mkcert ngrok claude"
+CLI_KNOWN="git tmux gh az mkcert ngrok claude"
 LANG_KNOWN="node dotnet aspire go rust odin"
 MISC_KNOWN="brave discord telegram"
 CONF_KNOWN="fonts zsh tmux"
@@ -141,6 +141,7 @@ install_app() {
 install_cli() {
   info "Installing CLI tools"
   ensure_brew
+  want "$CLI_ITEMS" git    && bi git
   want "$CLI_ITEMS" tmux   && bi tmux
   want "$CLI_ITEMS" gh     && bi gh
   want "$CLI_ITEMS" az     && bi azure-cli
