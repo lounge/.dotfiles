@@ -6,11 +6,11 @@
 #
 # Usage: ./install.sh [category[:item,item...]] ...
 #   app   dev GUI apps      (ghostty rider zed fork docker lmstudio postman)
-#   cli   command-line tools (git tmux gh az mkcert ngrok claude)
+#   cli   command-line tools (git tmux gh az mkcert ngrok claude herdr)
 #   lang  language toolchains (node dotnet aspire go rust odin)
 #   misc  non-dev apps       (brave discord telegram)
 #   conf  shell stack        (fonts zsh tmux)
-#   link  config symlinks    (zsh tmux git ghostty zed claude skills)
+#   link  config symlinks    (zsh tmux git ghostty zed claude herdr skills)
 # Examples:
 #   ./install.sh                     everything
 #   ./install.sh lang                all of lang
@@ -29,11 +29,11 @@ usage() { sed -n '/^# Usage/,/^# No arguments/s/^# \{0,1\}//p' "${BASH_SOURCE[0]
 
 # --- Category selection -------------------------------------------------------
 APP_KNOWN="ghostty rider zed fork docker lmstudio postman"
-CLI_KNOWN="git tmux gh az mkcert ngrok claude"
+CLI_KNOWN="git tmux gh az mkcert ngrok claude herdr"
 LANG_KNOWN="node dotnet aspire go rust odin"
 MISC_KNOWN="brave discord telegram"
 CONF_KNOWN="fonts zsh tmux"
-LINK_KNOWN="zsh tmux git ghostty zed claude skills"
+LINK_KNOWN="zsh tmux git ghostty zed claude herdr skills"
 
 DO_APP=false  APP_ITEMS=""
 DO_CLI=false  CLI_ITEMS=""
@@ -153,6 +153,12 @@ install_cli() {
     info "Installing Claude Code"
     curl -fsSL https://claude.ai/install.sh | bash
   fi
+
+  # herdr via native installer (self-updating with `herdr update`, lands in ~/.local/bin)
+  if want "$CLI_ITEMS" herdr && ! command -v herdr >/dev/null; then
+    info "Installing herdr"
+    curl -fsSL https://herdr.dev/install.sh | sh
+  fi
   return 0
 }
 
@@ -264,6 +270,8 @@ install_link() {
   want "$LINK_ITEMS" zed && link "$DOTFILES/zed/settings.json" "$HOME/.config/zed/settings.json"
   # Same for ~/.claude — settings.json only (model, plugins/marketplaces), rest is runtime state
   want "$LINK_ITEMS" claude && link "$DOTFILES/claude/settings.json" "$HOME/.claude/settings.json"
+  # Same for ~/.config/herdr — config.toml only, the rest is sockets, logs and session state
+  want "$LINK_ITEMS" herdr && link "$DOTFILES/herdr/config.toml" "$HOME/.config/herdr/config.toml"
 
   if want "$LINK_ITEMS" skills; then
     info "Linking Claude Code skills"
