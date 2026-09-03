@@ -31,6 +31,7 @@ cd ~/.dotfiles
 |        | `mkcert` | mkcert |
 |        | `ngrok` | ngrok |
 |        | `claude` | Claude Code (native installer) |
+|        | `herdr` | herdr (native installer) |
 | `lang` | `node` | fnm + Node LTS |
 |        | `dotnet` | .NET SDK (latest) |
 |        | `aspire` | Aspire CLI |
@@ -49,6 +50,7 @@ cd ~/.dotfiles
 |        | `ghostty` | ghostty config |
 |        | `zed` | zed settings |
 |        | `claude` | claude settings |
+|        | `herdr` | herdr config |
 |        | `skills` | Claude Code skills |
 
 `category` alone = all its items. No arguments = everything. `link` needs no brew (network only to fetch missing tmux plugins).
@@ -63,6 +65,7 @@ cd ~/.dotfiles
 | `ghostty/config` | `~/.config/ghostty/config` |
 | `zed/settings.json` | `~/.config/zed/settings.json` |
 | `claude/settings.json` | `~/.claude/settings.json` |
+| `herdr/config.toml` | `~/.config/herdr/config.toml` |
 | `agents/skills/*` | `~/.agents/skills/*` + `~/.claude/skills/*` |
 
 Symlinks mean edits in the repo apply immediately — just commit when done.
