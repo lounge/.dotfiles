@@ -12,3 +12,8 @@ keybind = alt+up=goto_split:up
 keybind = alt+down=goto_split:down
 
 keybind = alt+w=close_surface
+
+keybind = cmd+shift+left=new_split:left
+keybind = cmd+shift+right=new_split:right
+keybind = cmd+shift+up=new_split:up
+keybind = cmd+shift+down=new_split:down
