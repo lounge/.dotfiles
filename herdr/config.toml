@@ -4,3 +4,21 @@ agent_panel_sort = "spaces"
 [theme]
 name = "dracula"
 auto_switch = false
+
+# Mirror of the ghostty split keybindings, with ctrl added since ghostty
+# consumes the originals before herdr sees them.
+#   ghostty cmd+shift+arrow  new_split   ->  herdr ctrl+shift+arrow
+#   ghostty alt+arrow        goto_split  ->  herdr ctrl+alt+arrow
+#   ghostty alt+w            close       ->  herdr ctrl+alt+w
+# Herdr only splits right/down, so ctrl+shift+left/up stay unbound.
+[keys]
+split_vertical   = ["prefix+v", "ctrl+shift+right"]
+split_horizontal = ["prefix+minus", "ctrl+shift+down"]
+close_pane       = ["prefix+x", "ctrl+alt+w"]
+focus_pane_left  = ["prefix+h", "ctrl+alt+left"]
+focus_pane_down  = ["prefix+j", "ctrl+alt+down"]
+focus_pane_up    = ["prefix+k", "ctrl+alt+up"]
+focus_pane_right = ["prefix+l", "ctrl+alt+right"]
+next_workspace = "alt+tab"
+next_tab       = ["prefix+n", "alt+shift+right"]
+previous_tab   = ["prefix+p", "alt+shift+left"]
