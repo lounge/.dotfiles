@@ -32,6 +32,7 @@ cd ~/.dotfiles
 |        | `ngrok` | ngrok |
 |        | `claude` | Claude Code (native installer) |
 |        | `herdr` | herdr (native installer) |
+|        | `smtp4dev` | smtp4dev (dotnet global tool) |
 | `lang` | `node` | fnm + Node LTS |
 |        | `dotnet` | .NET SDK (latest) |
 |        | `aspire` | Aspire CLI |

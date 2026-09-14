@@ -6,7 +6,7 @@
 #
 # Usage: ./install.sh [category[:item,item...]] ...
 #   app   dev GUI apps      (ghostty rider zed fork docker lmstudio postman)
-#   cli   command-line tools (git tmux gh az mkcert ngrok claude herdr)
+#   cli   command-line tools (git tmux gh az mkcert ngrok claude herdr smtp4dev)
 #   lang  language toolchains (node dotnet aspire go rust odin)
 #   misc  non-dev apps       (brave discord telegram)
 #   conf  shell stack        (fonts zsh tmux)
@@ -29,7 +29,7 @@ usage() { sed -n '/^# Usage/,/^# No arguments/s/^# \{0,1\}//p' "${BASH_SOURCE[0]
 
 # --- Category selection -------------------------------------------------------
 APP_KNOWN="ghostty rider zed fork docker lmstudio postman"
-CLI_KNOWN="git tmux gh az mkcert ngrok claude herdr"
+CLI_KNOWN="git tmux gh az mkcert ngrok claude herdr smtp4dev"
 LANG_KNOWN="node dotnet aspire go rust odin"
 MISC_KNOWN="brave discord telegram"
 CONF_KNOWN="fonts zsh tmux"
@@ -158,6 +158,16 @@ install_cli() {
   if want "$CLI_ITEMS" herdr && ! command -v herdr >/dev/null; then
     info "Installing herdr"
     curl -fsSL https://herdr.dev/install.sh | sh
+  fi
+
+  # smtp4dev as a dotnet global tool (lands in ~/.dotnet/tools, zshrc adds it to PATH).
+  # Needs the .NET SDK, which lang installs later, so pull it in here if missing.
+  if want "$CLI_ITEMS" smtp4dev; then
+    command -v dotnet >/dev/null || bc dotnet-sdk
+    if ! dotnet tool list -g 2>/dev/null | grep -qi rnwood.smtp4dev; then
+      info "Installing smtp4dev"
+      dotnet tool install -g Rnwood.Smtp4dev
+    fi
   fi
   return 0
 }
