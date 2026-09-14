@@ -39,5 +39,8 @@ export PATH="$HOME/.local/bin:$PATH"
 # Added by LM Studio CLI (lms)
 [[ ! -d "$HOME/.lmstudio/bin" ]] || export PATH="$PATH:$HOME/.lmstudio/bin"
 
+# dotnet global tools (smtp4dev, jb)
+[[ ! -d "$HOME/.dotnet/tools" ]] || export PATH="$PATH:$HOME/.dotnet/tools"
+
 # Odin
 [[ ! -d "$HOME/odin" ]] || export PATH="$PATH:$HOME/odin"
