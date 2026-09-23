@@ -1,0 +1,60 @@
+version: "3"
+
+endpoints:
+
+  # SRK Endpoints
+
+  - name: srk-rednet
+    url: https://srk2-erkpn-rednet.eu.ngrok.io
+    upstream:
+      url: https://srk-erkpn-rednet.local.se:8001
+    traffic_policy: &srk-policy
+      on_http_request:
+        - actions:
+            - type: add-headers
+              config:
+                headers:
+                  host: "${req.host.split('.')[0]}.local.se:8001"
+
+  - name: srk-www
+    url: https://srk2-erkpn-www.eu.ngrok.io
+    upstream:
+      url: https://srk-erkpn-www.local.se:8001
+    traffic_policy: *srk-policy
+
+  - name: srk-varvare
+    url: https://srk2-erkpn-varvare.eu.ngrok.io
+    upstream:
+      url: https://srk-erkpn-varvare.local.se:8001
+    traffic_policy: *srk-policy
+
+  - name: srk-rkh
+    url: https://srk2-erkpn-rkh.eu.ngrok.io
+    upstream:
+      url: https://srk-erkpn-rkh.local.se:8001
+    traffic_policy: *srk-policy
+
+  - name: srk-rkuf
+    url: https://srk2-erkpn-rkuf.eu.ngrok.io
+    upstream:
+      url: https://srk-erkpn-rkuf.local.se:8001
+    traffic_policy: *srk-policy
+
+  - name: srk-rkfh
+    url: https://srk2-erkpn-rkfh.eu.ngrok.io
+    upstream:
+      url: https://srk-erkpn-rkfh.local.se:8001
+    traffic_policy: *srk-policy
+
+  - name: srk-glowred
+    url: https://srk2-erkpn-glowred.eu.ngrok.io
+    upstream:
+      url: https://srk-erkpn-glowred.local.se:8001
+    traffic_policy: *srk-policy
+
+  # UNHCR Endpoints
+
+  - name: s4u-www
+    url: https://s4u-www-frelun.eu.ngrok.io
+    upstream:
+      url: https://s4u-www.local.se:5002

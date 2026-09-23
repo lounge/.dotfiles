@@ -44,3 +44,6 @@ export PATH="$HOME/.local/bin:$PATH"
 
 # Odin
 [[ ! -d "$HOME/odin" ]] || export PATH="$PATH:$HOME/odin"
+
+# Machine-local secrets and overrides (untracked), e.g. NGROK_AUTHTOKEN
+[[ ! -f "$HOME/.zshrc.local" ]] || source "$HOME/.zshrc.local"

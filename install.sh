@@ -10,7 +10,7 @@
 #   lang  language toolchains (node dotnet aspire go rust odin)
 #   misc  non-dev apps       (brave discord telegram)
 #   conf  shell stack        (fonts zsh tmux)
-#   link  config symlinks    (zsh tmux git ghostty zed claude herdr skills)
+#   link  config symlinks    (zsh tmux git ghostty zed claude herdr ngrok skills)
 # Examples:
 #   ./install.sh                     everything
 #   ./install.sh lang                all of lang
@@ -33,7 +33,7 @@ CLI_KNOWN="git tmux gh az mkcert ngrok claude herdr smtp4dev"
 LANG_KNOWN="node dotnet aspire go rust odin"
 MISC_KNOWN="brave discord telegram"
 CONF_KNOWN="fonts zsh tmux"
-LINK_KNOWN="zsh tmux git ghostty zed claude herdr skills"
+LINK_KNOWN="zsh tmux git ghostty zed claude herdr ngrok skills"
 
 DO_APP=false  APP_ITEMS=""
 DO_CLI=false  CLI_ITEMS=""
@@ -282,6 +282,12 @@ install_link() {
   want "$LINK_ITEMS" claude && link "$DOTFILES/claude/settings.json" "$HOME/.claude/settings.json"
   # Same for ~/.config/herdr — config.toml only, the rest is sockets, logs and session state
   want "$LINK_ITEMS" herdr && link "$DOTFILES/herdr/config.toml" "$HOME/.config/herdr/config.toml"
+  # The authtoken is deliberately not in the repo — set NGROK_AUTHTOKEN in ~/.zshrc.local
+  if want "$LINK_ITEMS" ngrok; then
+    link "$DOTFILES/ngrok/ngrok.yml" "$HOME/Library/Application Support/ngrok/ngrok.yml"
+    grep -qs NGROK_AUTHTOKEN "$HOME/.zshrc.local" || \
+      skip "ngrok authtoken missing: add 'export NGROK_AUTHTOKEN=<token>' to ~/.zshrc.local"
+  fi
 
   if want "$LINK_ITEMS" skills; then
     info "Linking Claude Code skills"
