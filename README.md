@@ -52,6 +52,7 @@ cd ~/.dotfiles
 |        | `zed` | zed settings |
 |        | `claude` | claude settings |
 |        | `herdr` | herdr config |
+|        | `ngrok` | ngrok config (endpoints only, token via `~/.zshrc.local`) |
 |        | `skills` | Claude Code skills |
 
 `category` alone = all its items. No arguments = everything. `link` needs no brew (network only to fetch missing tmux plugins).
@@ -67,11 +68,13 @@ cd ~/.dotfiles
 | `zed/settings.json` | `~/.config/zed/settings.json` |
 | `claude/settings.json` | `~/.claude/settings.json` |
 | `herdr/config.toml` | `~/.config/herdr/config.toml` |
+| `ngrok/ngrok.yml` | `~/Library/Application Support/ngrok/ngrok.yml` |
 | `agents/skills/*` | `~/.agents/skills/*` + `~/.claude/skills/*` |
 
 Symlinks mean edits in the repo apply immediately — just commit when done.
 
 ## Manual steps
 
+- Secrets live in `~/.zshrc.local` (untracked, sourced by `.zshrc`). ngrok needs `export NGROK_AUTHTOKEN=<token>` there — the tracked `ngrok.yml` has no token.
 - Rider: import `rider/settings.zip` via **Manage Settings → Import**.
 - LM Studio CLI (`lms`): launch the app once to bootstrap it.
