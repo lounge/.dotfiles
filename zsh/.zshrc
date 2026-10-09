@@ -42,8 +42,5 @@ export PATH="$HOME/.local/bin:$PATH"
 # dotnet global tools (smtp4dev, jb)
 [[ ! -d "$HOME/.dotnet/tools" ]] || export PATH="$PATH:$HOME/.dotnet/tools"
 
-# Odin
-[[ ! -d "$HOME/odin" ]] || export PATH="$PATH:$HOME/odin"
-
 # Machine-local secrets and overrides (untracked), e.g. NGROK_AUTHTOKEN
 [[ ! -f "$HOME/.zshrc.local" ]] || source "$HOME/.zshrc.local"
