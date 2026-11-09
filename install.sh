@@ -6,7 +6,7 @@
 #
 # Usage: ./install.sh [category[:item,item...]] ...
 #   app   dev GUI apps      (ghostty rider zed fork docker lmstudio postman)
-#   cli   command-line tools (git tmux gh az mkcert ngrok claude herdr smtp4dev)
+#   cli   command-line tools (git tmux gh az mkcert ngrok claude herdr opencode smtp4dev)
 #   lang  language toolchains (node dotnet aspire go rust odin)
 #   misc  non-dev apps       (brave discord telegram)
 #   conf  shell stack        (fonts zsh tmux)
@@ -29,7 +29,7 @@ usage() { sed -n '/^# Usage/,/^# No arguments/s/^# \{0,1\}//p' "${BASH_SOURCE[0]
 
 # --- Category selection -------------------------------------------------------
 APP_KNOWN="ghostty rider zed fork docker lmstudio postman"
-CLI_KNOWN="git tmux gh az mkcert ngrok claude herdr smtp4dev"
+CLI_KNOWN="git tmux gh az mkcert ngrok claude herdr opencode smtp4dev"
 LANG_KNOWN="node dotnet aspire go rust odin"
 MISC_KNOWN="brave discord telegram"
 CONF_KNOWN="fonts zsh tmux"
@@ -158,6 +158,12 @@ install_cli() {
   if want "$CLI_ITEMS" herdr && ! command -v herdr >/dev/null; then
     info "Installing herdr"
     curl -fsSL https://herdr.dev/install.sh | sh
+  fi
+
+  # opencode via native installer (self-updating with `opencode upgrade`, lands in ~/.opencode/bin)
+  if want "$CLI_ITEMS" opencode && ! command -v opencode >/dev/null; then
+    info "Installing opencode"
+    curl -fsSL https://opencode.ai/install | bash
   fi
 
   # smtp4dev as a dotnet global tool (lands in ~/.dotnet/tools, zshrc adds it to PATH).
