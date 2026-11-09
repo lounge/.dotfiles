@@ -10,7 +10,7 @@
 #   lang  language toolchains (node dotnet aspire go rust odin)
 #   misc  non-dev apps       (brave discord telegram)
 #   conf  shell stack        (fonts zsh tmux)
-#   link  config symlinks    (zsh tmux git ghostty zed claude herdr ngrok skills)
+#   link  config symlinks    (zsh tmux git ghostty zed claude herdr opencode ngrok skills)
 # Examples:
 #   ./install.sh                     everything
 #   ./install.sh lang                all of lang
@@ -33,7 +33,7 @@ CLI_KNOWN="git tmux gh az mkcert ngrok claude herdr smtp4dev"
 LANG_KNOWN="node dotnet aspire go rust odin"
 MISC_KNOWN="brave discord telegram"
 CONF_KNOWN="fonts zsh tmux"
-LINK_KNOWN="zsh tmux git ghostty zed claude herdr ngrok skills"
+LINK_KNOWN="zsh tmux git ghostty zed claude herdr opencode ngrok skills"
 
 DO_APP=false  APP_ITEMS=""
 DO_CLI=false  CLI_ITEMS=""
@@ -282,6 +282,8 @@ install_link() {
   want "$LINK_ITEMS" claude && link "$DOTFILES/claude/settings.json" "$HOME/.claude/settings.json"
   # Same for ~/.config/herdr — config.toml only, the rest is sockets, logs and session state
   want "$LINK_ITEMS" herdr && link "$DOTFILES/herdr/config.toml" "$HOME/.config/herdr/config.toml"
+  # Same for ~/.config/opencode — opencode.json only; plugins/tui.jsonc are herdr-managed, service.json holds a secret
+  want "$LINK_ITEMS" opencode && link "$DOTFILES/opencode/opencode.json" "$HOME/.config/opencode/opencode.json"
   # The authtoken is deliberately not in the repo — set NGROK_AUTHTOKEN in ~/.zshrc.local
   if want "$LINK_ITEMS" ngrok; then
     link "$DOTFILES/ngrok/ngrok.yml" "$HOME/Library/Application Support/ngrok/ngrok.yml"

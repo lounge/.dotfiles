@@ -52,6 +52,7 @@ cd ~/.dotfiles
 |        | `zed` | zed settings |
 |        | `claude` | claude settings |
 |        | `herdr` | herdr config |
+|        | `opencode` | opencode config |
 |        | `ngrok` | ngrok config (endpoints only, token via `~/.zshrc.local`) |
 |        | `skills` | Claude Code skills |
 
@@ -68,6 +69,7 @@ cd ~/.dotfiles
 | `zed/settings.json` | `~/.config/zed/settings.json` |
 | `claude/settings.json` | `~/.claude/settings.json` |
 | `herdr/config.toml` | `~/.config/herdr/config.toml` |
+| `opencode/opencode.json` | `~/.config/opencode/opencode.json` |
 | `ngrok/ngrok.yml` | `~/Library/Application Support/ngrok/ngrok.yml` |
 | `agents/skills/*` | `~/.agents/skills/*` + `~/.claude/skills/*` |
 
