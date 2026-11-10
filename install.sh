@@ -200,7 +200,8 @@ install_lang() {
     bi odinfmt
   fi
   want "$LANG_ITEMS" dotnet && bc dotnet-sdk
-  want "$LANG_ITEMS" aspire && bc aspire
+  # Aspire is only published in the microsoft/aspire tap; the full token makes brew add it
+  want "$LANG_ITEMS" aspire && bc microsoft/aspire/aspire
 
   # Rust via rustup (zshrc sources ~/.cargo/env when present)
   if want "$LANG_ITEMS" rust && [ ! -d "$HOME/.cargo" ]; then
