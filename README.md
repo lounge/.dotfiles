@@ -1,5 +1,7 @@
 # dotfiles
 
+[![Install](https://github.com/lounge/.dotfiles/actions/workflows/install.yml/badge.svg)](https://github.com/lounge/.dotfiles/actions/workflows/install.yml)
+
 Personal macOS setup — tools, apps, and configs. Idempotent: re-run anytime, replaced files are backed up to `~/.dotfiles-backup-<timestamp>/`.
 
 ## Install
@@ -81,3 +83,7 @@ Symlinks mean edits in the repo apply immediately — just commit when done.
 - Secrets live in `~/.zshrc.local` (untracked, sourced by `.zshrc`). ngrok needs `export NGROK_AUTHTOKEN=<token>` there — the tracked `ngrok.yml` has no token.
 - Rider: import `rider/settings.zip` via **Manage Settings → Import**.
 - LM Studio CLI (`lms`): launch the app once to bootstrap it.
+
+## CI
+
+`.github/workflows/install.yml` runs `./install.sh cli lang conf link` on a macOS runner, runs it again to check idempotency, then verifies the symlinks and that every tool is on PATH in zsh. `app` and `misc` are not installed (multi-GB GUI casks); a separate job resolves each of their cask download URLs and checks it is reachable without downloading.

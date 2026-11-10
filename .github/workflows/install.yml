@@ -1,0 +1,99 @@
+name: Install
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  install:
+    name: install.sh on macOS
+    runs-on: macos-latest
+    env:
+      HOMEBREW_NO_AUTO_UPDATE: "1"
+      HOMEBREW_NO_INSTALL_CLEANUP: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      # app and misc are skipped: multi-GB GUI casks with nothing to verify.
+      # Their download URLs are checked in the cask-urls job below.
+      - name: Install cli lang conf link
+        run: ./install.sh cli lang conf link
+
+      - name: Re-run to verify idempotency
+        run: |
+          before=$(ls -d "$HOME"/.dotfiles-backup-* 2>/dev/null | wc -l)
+          ./install.sh cli lang conf link
+          after=$(ls -d "$HOME"/.dotfiles-backup-* 2>/dev/null | wc -l)
+          if [ "$before" != "$after" ]; then
+            echo "second run created a new backup dir, install.sh is not idempotent"
+            exit 1
+          fi
+
+      - name: Verify symlinks
+        run: |
+          fail=0
+          for f in \
+            "$HOME/.zshrc" "$HOME/.p10k.zsh" "$HOME/.tmux.conf" \
+            "$HOME/.gitconfig" "$HOME/.gitconfig-personal" "$HOME/.gitconfig-work" \
+            "$HOME/.config/ghostty/config" "$HOME/.config/zed/settings.json" \
+            "$HOME/.claude/settings.json" "$HOME/.config/herdr/config.toml" \
+            "$HOME/.config/opencode/opencode.json" \
+            "$HOME/Library/Application Support/ngrok/ngrok.yml" \
+            "$HOME"/.claude/skills/*; do
+            if [ -L "$f" ] && [ -e "$f" ]; then
+              echo "ok   $f -> $(readlink "$f")"
+            else
+              echo "FAIL $f is not a resolving symlink"; fail=1
+            fi
+          done
+          exit $fail
+
+      # Runs through the linked .zshrc so PATH entries for ~/.local/bin,
+      # ~/.opencode/bin, ~/.cargo and ~/.dotnet/tools are exercised too.
+      - name: Verify tools are on PATH in zsh
+        env:
+          DISABLE_AUTO_UPDATE: "true"
+        run: |
+          zsh -ic '
+            fail=0
+            for c in git tmux gh az mkcert ngrok claude herdr opencode smtp4dev \
+                     fnm node go golangci-lint odin odinfmt dotnet aspire rustc cargo; do
+              if command -v "$c" >/dev/null; then
+                echo "ok   $c -> $(command -v "$c")"
+              else
+                echo "FAIL $c not on PATH"; fail=1
+              fi
+            done
+            exit $fail
+          '
+
+  cask-urls:
+    name: app/misc download URLs reachable
+    runs-on: macos-latest
+    env:
+      HOMEBREW_NO_AUTO_UPDATE: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      # Resolves each cask's download URL for this machine via brew and probes it
+      # with a HEAD request (range request fallback), without downloading.
+      - name: Check cask URLs
+        run: |
+          fail=0
+          casks=$(sed -n '/^install_app()/,/^}/p; /^install_misc()/,/^}/p' install.sh \
+                  | grep -oE '\bbc [a-z0-9-]+' | awk '{print $2}')
+          for cask in $casks; do
+            url=$(brew info --cask --json=v2 "$cask" | jq -r '.casks[0].url')
+            if [ -z "$url" ] || [ "$url" = null ]; then
+              echo "FAIL $cask: could not resolve URL"; fail=1; continue
+            fi
+            if curl -fsSIL -o /dev/null --max-time 30 "$url" \
+               || curl -fsSL -o /dev/null --max-time 30 -r 0-0 "$url"; then
+              echo "ok   $cask  $url"
+            else
+              echo "FAIL $cask  $url"; fail=1
+            fi
+          done
+          exit $fail
