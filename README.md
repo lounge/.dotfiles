@@ -53,7 +53,7 @@ cd ~/.dotfiles
 |        | `git` | gitconfigs |
 |        | `ghostty` | ghostty config |
 |        | `zed` | zed settings |
-|        | `claude` | claude settings |
+|        | `claude` | claude settings + global `CLAUDE.md` |
 |        | `herdr` | herdr config |
 |        | `opencode` | opencode config |
 |        | `ngrok` | ngrok config (endpoints only, token via `~/.zshrc.local`) |
@@ -71,6 +71,7 @@ cd ~/.dotfiles
 | `ghostty/config` | `~/.config/ghostty/config` |
 | `zed/settings.json` | `~/.config/zed/settings.json` |
 | `claude/settings.json` | `~/.claude/settings.json` |
+| `claude/CLAUDE.md` | `~/.claude/CLAUDE.md` — global instructions for every project |
 | `herdr/config.toml` | `~/.config/herdr/config.toml` |
 | `opencode/opencode.json` | `~/.config/opencode/opencode.json` |
 | `ngrok/ngrok.yml` | `~/Library/Application Support/ngrok/ngrok.yml` |

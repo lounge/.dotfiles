@@ -285,8 +285,11 @@ install_link() {
   want "$LINK_ITEMS" ghostty && link "$DOTFILES/ghostty/config" "$HOME/.config/ghostty/config"
   # Only settings.json is tracked — the rest of ~/.config/zed is Zed-internal state
   want "$LINK_ITEMS" zed && link "$DOTFILES/zed/settings.json" "$HOME/.config/zed/settings.json"
-  # Same for ~/.claude — settings.json only (model, plugins/marketplaces), rest is runtime state
-  want "$LINK_ITEMS" claude && link "$DOTFILES/claude/settings.json" "$HOME/.claude/settings.json"
+  # Same for ~/.claude — settings.json (model, plugins/marketplaces) and CLAUDE.md only, rest is runtime state
+  if want "$LINK_ITEMS" claude; then
+    link "$DOTFILES/claude/settings.json" "$HOME/.claude/settings.json"
+    link "$DOTFILES/claude/CLAUDE.md"      "$HOME/.claude/CLAUDE.md"
+  fi
   # Same for ~/.config/herdr — config.toml only, the rest is sockets, logs and session state
   want "$LINK_ITEMS" herdr && link "$DOTFILES/herdr/config.toml" "$HOME/.config/herdr/config.toml"
   # Same for ~/.config/opencode — opencode.json only; plugins/tui.jsonc are herdr-managed, service.json holds a secret

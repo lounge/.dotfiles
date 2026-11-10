@@ -38,7 +38,8 @@ jobs:
             "$HOME/.zshrc" "$HOME/.p10k.zsh" "$HOME/.tmux.conf" \
             "$HOME/.gitconfig" "$HOME/.gitconfig-personal" "$HOME/.gitconfig-work" \
             "$HOME/.config/ghostty/config" "$HOME/.config/zed/settings.json" \
-            "$HOME/.claude/settings.json" "$HOME/.config/herdr/config.toml" \
+            "$HOME/.claude/settings.json" "$HOME/.claude/CLAUDE.md" \
+            "$HOME/.config/herdr/config.toml" \
             "$HOME/.config/opencode/opencode.json" \
             "$HOME/Library/Application Support/ngrok/ngrok.yml" \
             "$HOME"/.claude/skills/*; do
