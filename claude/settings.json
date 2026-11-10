@@ -1,7 +1,26 @@
 {
-  "model": "claude-fable-5[1m]",
+  "env": {
+    "CLAUDE_CODE_SUBAGENT_MODEL": "opus"
+  },
+  "model": "fable",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash '/Users/lounge/.claude/hooks/herdr-agent-state.sh' session",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  },
   "enabledPlugins": {
-    "aspire@aspire-skills": true
+    "aspire@aspire-skills": true,
+    "cc-skills-golang@samber": false,
+    "postman@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "aspire-skills": {
@@ -9,7 +28,49 @@
         "source": "github",
         "repo": "microsoft/aspire-skills"
       }
+    },
+    "samber": {
+      "source": {
+        "source": "github",
+        "repo": "samber/cc"
+      }
     }
   },
-  "effortLevel": "high"
+  "effortLevel": "high",
+  "modelSettings": {
+    "claude-fable-5-1": {
+      "effortLevel": "high"
+    },
+    "claude-opus-5-5": {
+      "effortLevel": "xhigh"
+    }
+  },
+  "autoMode": {
+    "environment": [
+      "### Org-wide",
+      "**Organization**: None configured",
+      "**Cloud provider(s)**: None configured",
+      "**Repository visibility**: Not queryable here (org/repo not derivable from origin remote) — assume private unless shown otherwise",
+      "**Internal sharing / snippet hosting**: None configured — treat public paste/gist services as outside the trust boundary",
+      "**Secrets management**: None configured",
+      "**Default / protected branches**: develop (default branch); protection status not queryable here",
+      "**CI/CD deploy targets**: None configured",
+      "**Network posture**: None configured",
+      "**Host containment**: None configured — assume Claude Code runs on an ordinary developer machine or CI runner with open internet",
+      "**Source control**: The trusted repo (/Users/lounge/workspace/work/UNHCR/S4U.Web) and its origin remote only",
+      "**Trusted internal domains**: sverigeforunhcr.se, www.sverigeforunhcr.se, sverigeforunhcr.adoveo.com (hosts contacted in this project's recent usage)",
+      "**Trusted cloud buckets**: None configured",
+      "**Key internal services**: None configured",
+      "**Internal package registry**: None configured",
+      "**Sensitive data locations & audiences**: src/S4U.Web.Frontend/source/.env (sensitive-looking path found in config scan); any other file or store holding personal data, confidential business data, credentials, regulated data, or similarly sensitive material — share only with audiences cleared at the [named+specifics] bar",
+      "**Data retention / declassification**: None configured",
+      "**Sensitive remote targets**: any namespace, host, or container whose name carries `prod` or `production` as a whole word or name segment",
+      "**Protected deployment namespaces / environments**: None configured — fall back to the Sensitive remote targets heuristic",
+      "**Protected IaC scopes**: IAM, RBAC, networking, quota, and node-pool resources; anything whose name or tag carries `prod` or `production` as a whole word or name segment",
+      "### User-specific",
+      "**Primary use of Claude Code**: software development (.NET/dotnet project work, observed via dotnet/dll CLI usage)",
+      "**Trusted repo**: /Users/lounge/workspace/work/UNHCR/S4U.Web (this repo) and its origin remote",
+      "**Org-specific CLIs**: None configured"
+    ]
+  }
 }

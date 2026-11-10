@@ -285,7 +285,9 @@ install_link() {
   want "$LINK_ITEMS" ghostty && link "$DOTFILES/ghostty/config" "$HOME/.config/ghostty/config"
   # Only settings.json is tracked — the rest of ~/.config/zed is Zed-internal state
   want "$LINK_ITEMS" zed && link "$DOTFILES/zed/settings.json" "$HOME/.config/zed/settings.json"
-  # Same for ~/.claude — settings.json (model, plugins/marketplaces) and CLAUDE.md only, rest is runtime state
+  # Same for ~/.claude — settings.json (model, plugins/marketplaces) and CLAUDE.md only, rest is runtime state.
+  # The hooks block in settings.json and ~/.claude/hooks/herdr-agent-state.sh are written by
+  # `herdr integration`, not by hand; herdr re-creates both when its integration is (re)installed.
   if want "$LINK_ITEMS" claude; then
     link "$DOTFILES/claude/settings.json" "$HOME/.claude/settings.json"
     link "$DOTFILES/claude/CLAUDE.md"      "$HOME/.claude/CLAUDE.md"
